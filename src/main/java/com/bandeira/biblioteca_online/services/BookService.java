@@ -59,7 +59,24 @@ public class BookService {
         if (updateBookDTO.availability() != null) {
             book.setAvailability(updateBookDTO.availability());
         }
-        
+
         return "";
+    }
+
+
+    public void deleteById(Long id){
+        var book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
+
+        bookRepository.deleteById(id);
+    }
+
+
+    public Book findByName(String name){
+        var book = bookRepository.findByName(name);
+
+        if(book == null){
+            throw new BookNotFoundException();
+        }
+        return book;
     }
 }
