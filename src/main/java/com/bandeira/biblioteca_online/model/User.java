@@ -41,6 +41,13 @@ public class User implements UserDetails {
 
     private List<Loan> loans = new ArrayList<>();
 
+    public User(String name, String email, String password, UserRole userRole) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.userRole = userRole;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
