@@ -4,6 +4,7 @@ import com.bandeira.biblioteca_online.dtos.UpdateUserDTO;
 import com.bandeira.biblioteca_online.dtos.UserRequest;
 import com.bandeira.biblioteca_online.exceptions.EmailAlreadyExistsException;
 import com.bandeira.biblioteca_online.exceptions.IncorrectPasswordException;
+import com.bandeira.biblioteca_online.exceptions.PasswordsDoNotMatch;
 import com.bandeira.biblioteca_online.exceptions.UserNotFoundException;
 import com.bandeira.biblioteca_online.model.User;
 import com.bandeira.biblioteca_online.model.UserRole;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.beans.Encoder;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -50,18 +52,14 @@ public class UserService {
             return userRequest;
         }
     }
-    
 
-    public void updateUser (UpdateUserDTO updateUserDTO){
+
+    public void updateUser(UpdateUserDTO updateUserDTO){
         var user = userRepository.findById(updateUserDTO.id())
                 .orElseThrow(UserNotFoundException::new);
 
         if(updateUserDTO.name() != null){
             user.setName(updateUserDTO.name());
-        }
-
-        if(updateUserDTO.email() != null){
-            user.setName(updateUserDTO.email());
         }
 
         if(updateUserDTO.cpf() != null){
@@ -86,6 +84,39 @@ public class UserService {
         userRepository.save(user);
 
         return "Your email has been updated successfully";
+    }
+
+
+    public List<User> findAll() {
+        return (List<User>) userRepository.findAll();
+    }
+
+
+
+    public String updatePassword(Long id, String password, String newPassword, String passwordConfirmation) {
+
+        var user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+
+        if (!user.getPassword().equals(password)){
+            throw new IncorrectPasswordException();
+        }
+
+        if (!newPassword.equals(passwordConfirmation)){
+            throw new PasswordsDoNotMatch();
+        }
+
+        user.setPassword(password);
+
+        userRepository.save(user);
+
+        return "Your password has been updated successfully";
+    }
+
+
+    public void deleteById(Long id){
+        userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+
+        userRepository.deleteById(id);
     }
 
 

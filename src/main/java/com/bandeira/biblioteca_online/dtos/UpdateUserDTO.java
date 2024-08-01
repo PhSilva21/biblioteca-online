@@ -9,9 +9,6 @@ public record UpdateUserDTO(
         String name,
 
 
-        String email,
-
-
         String cpf
 ) {
 }
